@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import csv
 import copy
 import argparse
@@ -13,6 +11,7 @@ import mediapipe as mp
 
 from utils import CvFpsCalc
 from model import KeyPointClassifier
+from utils.logger import Logger
 
 
 def get_args():
@@ -38,24 +37,29 @@ def get_args():
 
 
 def main():
+    log = Logger("app.py").get_logger()
     # Argument parsing #################################################################
     args = get_args()
 
+    log.info("Setting arguments")
     cap_device = args.device
     cap_width = args.width
     cap_height = args.height
     use_static_image_mode = args.use_static_image_mode
     min_detection_confidence = args.min_detection_confidence
     min_tracking_confidence = args.min_tracking_confidence
+    print(min_detection_confidence, use_static_image_mode)
 
     use_brect = True
 
     # Camera preparation ###############################################################
+    log.info("Preparing camera")
     cap = cv.VideoCapture(cap_device)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
     # Model load #############################################################
+    log.info("Loading mediapipe model")
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=use_static_image_mode,
@@ -67,6 +71,7 @@ def main():
     keypoint_classifier = KeyPointClassifier()
 
     # Read labels ###########################################################
+    log.info("Reading classifier labels")
     with open('model/keypoint_classifier/keypoint_classifier_label.csv',
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
@@ -80,6 +85,7 @@ def main():
     #  ########################################################################
     mode = 0
 
+    log.info("Steping into main loop")
     while True:
         fps = cvFpsCalc.get()
 
