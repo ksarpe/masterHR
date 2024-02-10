@@ -11,6 +11,7 @@ RANDOM_SEED = 42
 #From where to train and where to save
 dataset = 'model/keypoint_classifier/keypoint.csv'
 model_save_path = 'model/keypoint_classifier/keypoint_classifier.hdf5'
+tflite_save_path = 'model/keypoint_classifier/keypoint_classifier.tflite'
 
 #Current labels amount
 NUM_CLASSES = 3
@@ -79,8 +80,6 @@ y_pred = np.argmax(Y_pred, axis=1)
 print_confusion_matrix(y_test, y_pred)
 
 model.save(model_save_path, include_optimizer=False)
-
-tflite_save_path = 'model/keypoint_classifier/keypoint_classifier.tflite'
 
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 converter.optimizations = [tf.lite.Optimize.DEFAULT]

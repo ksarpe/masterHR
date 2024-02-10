@@ -9,9 +9,13 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
-from utils import CvFpsCalc
-from model import KeyPointClassifier
-from utils.logger import Logger
+from backend.model.keypoint_classifier.keypoint_classifier import KeyPointClassifier
+from backend.utils.logger import Logger
+
+PATHS = {
+    "labels":'backend/model/keypoint_classifier/keypoint_classifier_label.csv',
+    "keypoints_save": 'backend/model/keypoint_classifier/keypoint.csv'
+}
 
 
 def get_args():
@@ -72,7 +76,7 @@ def main():
 
     # Read labels ###########################################################
     log.info("Reading classifier labels")
-    with open('model/keypoint_classifier/keypoint_classifier_label.csv',
+    with open(PATHS["labels"],
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
         keypoint_classifier_labels = [
@@ -80,14 +84,12 @@ def main():
         ]
 
     # FPS Measurement ########################################################
-    cvFpsCalc = CvFpsCalc(buffer_len=10)
 
     #  ########################################################################
     mode = 0
 
     log.info("Steping into main loop")
     while True:
-        fps = cvFpsCalc.get()
 
         # Process Key (ESC: end) #################################################
         key = cv.waitKey(10)
@@ -138,7 +140,7 @@ def main():
                     keypoint_classifier_labels[hand_sign_id],
                 )
 
-        debug_image = draw_info(debug_image, fps, mode, number)
+        debug_image = draw_info(debug_image, mode, number)
 
         # Screen reflection #############################################################
         cv.imshow('Hand Gesture Recognition', debug_image)
@@ -225,7 +227,7 @@ def logging_csv(number, mode, landmark_list):
     if mode == 0:
         pass
     if mode == 1 and (0 <= number <= 9):
-        csv_path = 'model/keypoint_classifier/keypoint.csv'
+        csv_path = PATHS["keypoints_save"]
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
@@ -441,12 +443,7 @@ def draw_info_text(image, brect, handedness, hand_sign_text):
 
     return image
 
-def draw_info(image, fps, mode, number):
-    cv.putText(image, "FPS:" + str(fps), (10, 30), cv.FONT_HERSHEY_SIMPLEX,
-               1.0, (0, 0, 0), 4, cv.LINE_AA)
-    cv.putText(image, "FPS:" + str(fps), (10, 30), cv.FONT_HERSHEY_SIMPLEX,
-               1.0, (255, 255, 255), 2, cv.LINE_AA)
-
+def draw_info(image, mode, number):
     mode_string = ['Logging Key Point']
     if 1 <= mode <= 2:
         cv.putText(image, "MODE:" + mode_string[mode - 1], (10, 90),
