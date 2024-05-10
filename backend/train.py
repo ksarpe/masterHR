@@ -9,9 +9,9 @@ from sklearn.model_selection import train_test_split
 RANDOM_SEED = 42
 
 #From where to train and where to save
-dataset = 'model/keypoint_classifier/keypoint.csv'
-model_save_path = 'model/keypoint_classifier/keypoint_classifier.hdf5'
-tflite_save_path = 'model/keypoint_classifier/keypoint_classifier.tflite'
+dataset = 'model/point_recognizer/points.csv'
+model_save_path = 'model/point_recognizer/point_recognizer.hdf5'
+tflite_save_path = 'model/point_recognizer/point_recognizer.tflite'
 
 #Current labels amount
 NUM_CLASSES = 3

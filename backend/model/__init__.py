@@ -1,1 +1,1 @@
-from backend.model.keypoint_classifier.keypoint_classifier import KeyPointClassifier
+from backend.model.point_recognizer.point_recognizer import PointRecognizer

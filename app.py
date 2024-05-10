@@ -9,12 +9,12 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
-from backend.model.keypoint_classifier.keypoint_classifier import KeyPointClassifier
+from backend.model.point_recognizer.point_recognizer import PointRecognizer
 from backend.utils.logger import Logger
 
 PATHS = {
-    "labels":'backend/model/keypoint_classifier/keypoint_classifier_label.csv',
-    "keypoints_save": 'backend/model/keypoint_classifier/keypoint.csv'
+    "labels":'backend/model/point_recognizer/point_recognizer_labels.csv',
+    "points_save": 'backend/model/point_recognizer/points.csv'
 }
 
 
@@ -72,15 +72,15 @@ def main():
         min_tracking_confidence=min_tracking_confidence,
     )
 
-    keypoint_classifier = KeyPointClassifier()
+    point_recognizer = PointRecognizer()
 
     # Read labels ###########################################################
     log.info("Reading classifier labels")
     with open(PATHS["labels"],
               encoding='utf-8-sig') as f:
-        keypoint_classifier_labels = csv.reader(f)
-        keypoint_classifier_labels = [
-            row[0] for row in keypoint_classifier_labels
+        point_recognizer_labels = csv.reader(f)
+        point_recognizer_labels = [
+            row[0] for row in point_recognizer_labels
         ]
 
     # FPS Measurement ########################################################
@@ -128,7 +128,7 @@ def main():
                 logging_csv(number, mode, pre_processed_landmark_list)
 
                 # Hand sign classification
-                hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+                hand_sign_id = point_recognizer(pre_processed_landmark_list)
 
                 # Drawing part
                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
@@ -137,7 +137,7 @@ def main():
                     debug_image,
                     brect,
                     handedness,
-                    keypoint_classifier_labels[hand_sign_id],
+                    point_recognizer_labels[hand_sign_id],
                 )
 
         debug_image = draw_info(debug_image, mode, number)
@@ -151,7 +151,7 @@ def main():
 
 def select_mode(key, mode):
     number = -1
-    if 48 <= key <= 57:  # 0 ~ 9 (If is in 'K' mode then it will log this label keypoint to training set)
+    if 48 <= key <= 57:  # 0 ~ 9 (If is in 'K' mode then it will log this label point to training set)
         number = key - 48
     if key == 110:  # n (Normal mode)
         mode = 0
@@ -183,7 +183,7 @@ def calc_landmark_list(image, landmarks):
 
     landmark_point = []
 
-    # Keypoint
+    # Point
     for _, landmark in enumerate(landmarks.landmark):
         landmark_x = min(int(landmark.x * image_width), image_width - 1)
         landmark_y = min(int(landmark.y * image_height), image_height - 1)
@@ -227,7 +227,7 @@ def logging_csv(number, mode, landmark_list):
     if mode == 0:
         pass
     if mode == 1 and (0 <= number <= 9):
-        csv_path = PATHS["keypoints_save"]
+        csv_path = PATHS["points_save"]
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
