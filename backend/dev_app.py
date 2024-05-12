@@ -7,12 +7,12 @@ import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
-from backend.model.point_recognizer.point_recognizer import PointRecognizer
-from backend.utils.logger import Logger
+from model.point_recognizer.point_recognizer import PointRecognizer
+from utils.logger import Logger
 
 PATHS = {
-    "labels":'backend/model/point_recognizer/point_recognizer_labels.csv',
-    "points_save": 'backend/model/point_recognizer/points.csv'
+    "labels":'model/point_recognizer/point_recognizer_labels.csv',
+    "points_save": 'model/point_recognizer/points.csv'
 }
 
 mode = 0
