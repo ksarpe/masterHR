@@ -1,6 +1,5 @@
 import csv
 import copy
-import argparse
 import itertools
 
 import cv2 as cv
@@ -9,65 +8,28 @@ import mediapipe as mp
 
 from model.point_recognizer.point_recognizer import PointRecognizer
 from utils.logger import Logger
-
-PATHS = {
-    "labels":'model/point_recognizer/point_recognizer_labels.csv',
-    "points_save": 'model/point_recognizer/points.csv'
-}
-
-mode = 0
-
-def get_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--device", type=int, default=0)
-    parser.add_argument("--width", help='cap width', type=int, default=960)
-    parser.add_argument("--height", help='cap height', type=int, default=540)
-
-    parser.add_argument('--use_static_image_mode', action='store_true') #TODO: Check if use static or not
-    parser.add_argument("--min_detection_confidence",
-                        help='min_detection_confidence',
-                        type=float,
-                        default=0.75)
-    parser.add_argument("--min_tracking_confidence", # This will be skipped as static image mode is used, otherwise it will be used to hop to the next frame
-                        help='min_tracking_confidence',
-                        type=int,
-                        default=0.5)
-
-    args = parser.parse_args()
-
-    return args
-
+from config.constants import *
 
 def main():
     log = Logger("app.py").get_logger()
-    # Argument parsing #################################################################
-    args = get_args()
 
-    log.info("Setting arguments")
-    cap_device = args.device
-    cap_width = args.width
-    cap_height = args.height
-    use_static_image_mode = args.use_static_image_mode
-    min_detection_confidence = args.min_detection_confidence
-    min_tracking_confidence = args.min_tracking_confidence
-
-    use_brect = True
+    use_bounding_box = True
+    mode = 0
 
     # Camera preparation ###############################################################
     log.info("Preparing camera")
-    cap = cv.VideoCapture(cap_device)
-    cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
-    cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
+    cap = cv.VideoCapture(CAP_DEVICE)
+    cap.set(cv.CAP_PROP_FRAME_WIDTH, CAP_WIDTH)
+    cap.set(cv.CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT)
 
     # Model load #############################################################
     log.info("Loading mediapipe model")
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
-        static_image_mode=use_static_image_mode,
-        max_num_hands=2,
-        min_detection_confidence=min_detection_confidence,
-        min_tracking_confidence=min_tracking_confidence,
+        static_image_mode=STATIC_IMAGE_MODE,
+        max_num_hands=HANDS_NUM,
+        min_detection_confidence=MIN_DETECTION_CONFIDENCE,
+        min_tracking_confidence=MIN_TRACKING_CONFIDENCE,
     )
 
     point_recognizer = PointRecognizer() # Initialize the point recognizer on the pre-trained model
@@ -75,30 +37,28 @@ def main():
     # Read labels ###########################################################
     log.info("Reading classifier labels")
     # It will read the labels and create a list of them
-    with open(PATHS["labels"],
+    with open(LABELS_PATH,
               encoding='utf-8-sig') as f:
         point_recognizer_labels = csv.reader(f)
         point_recognizer_labels = [
             row[0] for row in point_recognizer_labels
         ]
 
-    #  ########################################################################
-
     log.info("Steping into main loop")
     while True:
 
         # Process Key (ESC: end) #################################################
         key = cv.waitKey(10)
-        if key == ord('q'):  # ESC
+        if key == ord(QUIT_KEY):  # ESC
             break
-        number, mode = select_mode(key, mode)
+        digit, mode = select_mode(key, mode)
 
         # Camera capture #####################################################
         ret, image = cap.read()
         if not ret:
             break
         image = cv.flip(image, 1)  # Mirror display
-        debug_image = copy.deepcopy(image)
+        debug_img = copy.deepcopy(image)
 
         # Detection implementation #############################################################
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
@@ -112,51 +72,51 @@ def main():
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
                 # Bounding box calculation
-                brect = calc_bounding_rect(debug_image, hand_landmarks)
-                # Landmark calculation
-                landmark_list = calc_landmark_list(debug_image, hand_landmarks)
+                bounding_box = calc_rect(debug_img, hand_landmarks)
+                # landmark calculation
+                landmark_list = calc_landmark_list(debug_img, hand_landmarks)
 
                 # Conversion to relative coordinates / normalized coordinates
                 pre_processed_landmark_list = pre_process_landmark(
                     landmark_list)
 
                 # Write to the dataset file
-                logging_csv(number, mode, pre_processed_landmark_list)
+                logging_csv(digit, mode, pre_processed_landmark_list)
 
-                # Hand sign classification
-                hand_sign_id = point_recognizer(pre_processed_landmark_list)
+                # Hand landmark classification
+                hand_landmark_id = point_recognizer(pre_processed_landmark_list)
 
                 # Drawing part
-                debug_image = draw_bounding_rect(use_brect, debug_image, brect)
-                debug_image = draw_landmarks(debug_image, landmark_list)
-                debug_image = draw_info_text(
-                    debug_image,
-                    brect,
+                debug_img = draw_bounding_rect(use_bounding_box, debug_img, bounding_box)
+                debug_img = draw_landmarks(debug_img, landmark_list)
+                debug_img = draw_hand_text(
+                    debug_img,
+                    bounding_box,
                     handedness,
-                    point_recognizer_labels[hand_sign_id],
+                    point_recognizer_labels[hand_landmark_id],
                 )
 
-        debug_image = draw_info(debug_image, mode, number)
+        debug_img = draw_info(debug_img, mode, digit)
 
         # Screen reflection #############################################################
-        cv.imshow('Hand Gesture Recognition', debug_image)
+        cv.imshow('landmark Language Recognition', debug_img)
 
     cap.release()
     cv.destroyAllWindows()
 
 
 def select_mode(key, mode):
-    number = -1
+    digit = -1
     if 48 <= key <= 57:  # 0 ~ 9 (If is in 'R(record)' mode then it will log this label point to training set)
-        number = key - 48
+        digit = key - 48
     if key == 110:  # n (Normal mode)
         mode = 0
     if key == 114:  # r (Log to training set)
         mode = 1
-    return number, mode
+    return digit, mode
 
 
-def calc_bounding_rect(image, landmarks):
+def calc_rect(image, landmarks):
     image_width, image_height = image.shape[1], image.shape[0]
 
     landmark_array = np.empty((0, 2), int)
@@ -219,14 +179,14 @@ def pre_process_landmark(landmark_list):
     return temp_landmark_list
 
 
-def logging_csv(number, mode, landmark_list):
+def logging_csv(digit, mode, landmark_list):
     if mode == 0:
         pass
-    if mode == 1 and (0 <= number <= 9):
-        csv_path = PATHS["points_save"]
+    if mode == 1 and (0 <= digit <= 9):
+        csv_path = POINTS_SAVE_PATH
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([number, *landmark_list])
+            writer.writerow([digit, *landmark_list])
     return
 
 
@@ -418,37 +378,53 @@ def draw_landmarks(image, landmark_point):
     return image
 
 
-def draw_bounding_rect(use_brect, image, brect):
-    if use_brect:
-        cv.rectangle(image, (brect[0], brect[1]), (brect[2], brect[3]),
+def draw_bounding_rect(use_bounding_box, image, bounding_box):
+    if use_bounding_box:
+        cv.rectangle(image, (bounding_box[0], bounding_box[1]), (bounding_box[2], bounding_box[3]),
                      (0, 0, 0), 1)
 
     return image
 
 
-def draw_info_text(image, brect, handedness, hand_sign_text):
-    cv.rectangle(image, (brect[0], brect[1]), (brect[2], brect[1] - 22),
+def draw_hand_text(image, bounding_box, handedness, hand_landmark_text):
+    cv.rectangle(image, (bounding_box[0], bounding_box[1]), (bounding_box[2], bounding_box[1] - 22),
                  (0, 0, 0), -1)
 
     info_text = handedness.classification[0].label[0:]
-    if hand_sign_text != "":
-        info_text = info_text + ':' + hand_sign_text
-    cv.putText(image, info_text, (brect[0] + 5, brect[1] - 4),
-               cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv.LINE_AA)
+    if hand_landmark_text != "":
+        info_text +=  f':{hand_landmark_text}'
+
+    text_position = (bounding_box[0] + 5, bounding_box[1] - 4)
+    text_font = cv.FONT_HERSHEY_SIMPLEX
+    text_scale = 0.6
+    text_color = (255, 255, 255)  # White color
+    text_thickness = 1
+    text_line_type = cv.LINE_AA
+
+    # Place the text on the image
+    cv.putText(image, info_text, text_position, text_font, text_scale,
+               text_color, text_thickness, text_line_type)
 
     return image
 
 #TODO: Check the licenses for this code
-def draw_info(image, mode, number):
-    mode_string = ["NORMAL", "RECORD"]
+def draw_info(image, mode, digit):
+    status_labels = ["NORMAL", "RECORD"]
+    vertical_offset = 90
+    text_color = (255, 255, 255)  # White color
+    font = cv.FONT_HERSHEY_PLAIN
+    font_scale = 0.6
+    line_type = cv.LINE_AA
+    thickness = 1
+
     if 0 <= mode <= 1:
-        cv.putText(image, "MODE:" + mode_string[mode] , (10, 90),
-                   cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
-                   cv.LINE_AA)
-        if 0 <= number <= 9:
-            cv.putText(image, "NUM:" + str(number), (10, 110),
-                       cv.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
-                       cv.LINE_AA)
+        cv.putText(image, f"MODE:{status_labels[mode]}", (10, vertical_offset),
+                   font, font_scale, text_color, thickness, line_type)
+
+        if 0 <= digit <= 9:
+            # Annotate the image with the number
+            cv.putText(image, f"NUM:{digit}", (10, vertical_offset + 20),
+                       font, font_scale, text_color, thickness, line_type)
     return image
 
 

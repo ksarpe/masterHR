@@ -1,1 +1,1 @@
-from backend.model.point_recognizer.point_recognizer import PointRecognizer
+from model.point_recognizer.point_recognizer import PointRecognizer
