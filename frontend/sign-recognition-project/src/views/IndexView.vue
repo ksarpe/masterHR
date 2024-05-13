@@ -32,9 +32,20 @@ const captureFrame = () => {
     canvas.height = videoElement.value.videoHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(videoElement.value, 0, 0, canvas.width, canvas.height);
-    canvas.toBlob((blob) => {
-      // Send this blob to the backend
-      console.log(blob); // Just for demonstration, replace with API call
+    canvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append('file', blob, 'frame.png');
+
+      try {
+        const response = await fetch('http://localhost:5000/process_frame', {
+          method: 'POST',
+          body: formData,
+        });
+        const result = await response.json();
+        console.log(result);
+      } catch (error) {
+        console.error('Error:', error);
+      }
     });
   }
 };
