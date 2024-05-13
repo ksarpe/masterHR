@@ -13,9 +13,13 @@ def process_frame():
   file = request.files['file']
 
   image_processor = ImageProcessor()
-  image_processor.process(file)
-  return jsonify({'message': 'Image received and processed'}), 200
+  try:
+    response_dict = image_processor.process(file)
+    return jsonify(response_dict), 200
+  except Exception as e:
+    return jsonify({'error': 'Failed to process the image', 'details': str(e)}), 500
   
-
+if __name__ == '__main__':
+    app.run(debug=True)
 
 

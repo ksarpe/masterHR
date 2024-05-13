@@ -1,14 +1,19 @@
 <template>
   <div>
     <video ref="videoElement" autoplay></video>
-    <button @click="captureFrame">Capture Frame</button>
+    <button @click="captureFrame">Click here to send your answer</button>
   </div>
+  <div v-if="result">
+      <p>Label: {{ result.label_name }}</p>
+      <p>Handedness: {{ result.handedness }}</p>
+    </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 
 const videoElement = ref(null);
+const result = reactive({ label_name: 'none', handedness: 'none' });
 
 onMounted(() => {
   setupVideo();
@@ -41,8 +46,13 @@ const captureFrame = () => {
           method: 'POST',
           body: formData,
         });
-        const result = await response.json();
-        console.log(result);
+        const data = await response.json();
+        if (response.ok) {
+          result.label_name = data.label_name;
+          result.handedness = data.handedness;
+        } else {
+          console.error('Error from server:', data);
+        }
       } catch (error) {
         console.error('Error:', error);
       }

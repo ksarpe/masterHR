@@ -57,7 +57,8 @@ def main():
         ret, image = cap.read()
         if not ret:
             break
-        image = cv.flip(image, 1)  # Mirror display
+        image = np.array(image)
+        image = cv.flip(image, 1)
         debug_img = copy.deepcopy(image)
 
         # Detection implementation #############################################################
