@@ -1,9 +1,10 @@
 <template>
-  <div class="flex flex-col min-h-screen">
-    <router-view class="flex-grow" />
+  <div>
+    <main-nav />
+    <router-view />
   </div>
 </template>
 
 <script setup>
-
+import MainNav from '@/components/MainNav.vue'
 </script>

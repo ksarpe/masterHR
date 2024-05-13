@@ -1,62 +1,7 @@
-<template>
-  <div>
-    <video ref="videoElement" autoplay></video>
-    <button @click="captureFrame">Click here to send your answer</button>
-  </div>
-  <div v-if="result">
-      <p>Label: {{ result.label_name }}</p>
-      <p>Handedness: {{ result.handedness }}</p>
+
+  <template>
+    <div class="flex justify-center items-center my-8">
+      <div class="font-medium text-2xl">Strona główna projektu platformy do nauki języka migowego</div>
     </div>
-</template>
-
-<script setup>
-import { ref, onMounted, reactive } from 'vue';
-
-const videoElement = ref(null);
-const result = reactive({ label_name: 'none', handedness: 'none' });
-
-onMounted(() => {
-  setupVideo();
-});
-
-const setupVideo = async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    if (videoElement.value) {
-      videoElement.value.srcObject = stream;
-    }
-  } catch (error) {
-    console.error("Error accessing the camera:", error);
-  }
-};
-
-const captureFrame = () => {
-  const canvas = document.createElement('canvas');
-  if (videoElement.value) {
-    canvas.width = videoElement.value.videoWidth;
-    canvas.height = videoElement.value.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(videoElement.value, 0, 0, canvas.width, canvas.height);
-    canvas.toBlob(async (blob) => {
-      const formData = new FormData();
-      formData.append('file', blob, 'frame.png');
-
-      try {
-        const response = await fetch('http://localhost:5000/process_frame', {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await response.json();
-        if (response.ok) {
-          result.label_name = data.label_name;
-          result.handedness = data.handedness;
-        } else {
-          console.error('Error from server:', data);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    });
-  }
-};
-</script>
+  </template>
+<script setup></script>
