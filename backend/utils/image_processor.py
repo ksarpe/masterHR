@@ -1,9 +1,10 @@
 import cv2 as cv
 import numpy as np
 import csv
-from PIL import Image
 import mediapipe as mp
 import itertools
+
+from PIL import Image
 
 from config.constants import *
 from model.point_recognizer.point_recognizer import PointRecognizer
@@ -27,7 +28,6 @@ class ImageProcessor:
     # - label_name: e.g "hello"
     # - handedness: e.g "Right"
     def process(self, image):
-        # Process image
         self.log.info("Processing image")
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands(
@@ -42,7 +42,7 @@ class ImageProcessor:
         image = Image.open(image.stream).convert('RGB')
         image = np.array(image)
         image = cv.flip(image, 1)
-        # save this image to file
+        
         image.flags.writeable = False
         results = hands.process(image)
         image.flags.writeable = True
@@ -51,14 +51,10 @@ class ImageProcessor:
         if results.multi_hand_landmarks is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
-                # landmark calculation
+                
                 landmark_list = calc_landmark_list(image, hand_landmarks)
-
-                # Conversion to relative coordinates / normalized coordinates
                 pre_processed_landmark_list = pre_process_landmark(
                     landmark_list)
-
-                # Hand landmark classification
                 hand_landmark_id = point_recognizer(pre_processed_landmark_list)
         else:
             self.log.error("Hand not detected")
@@ -76,20 +72,15 @@ def calc_landmark_list(image, landmarks):
 
     landmark_point = []
 
-    # Point
     for _, landmark in enumerate(landmarks.landmark):
         landmark_x = min(int(landmark.x * image_width), image_width - 1)
         landmark_y = min(int(landmark.y * image_height), image_height - 1)
-        # landmark_z = landmark.z
 
         landmark_point.append([landmark_x, landmark_y])
 
     return landmark_point
 
 def pre_process_landmark(landmark_list):
-    # Convert to relative coordinates
-    # Calculate distance to every point
-    # From the base (wrist) point
     base_x, base_y = 0, 0
     for index, landmark_point in enumerate(landmark_list):
         if index == 0:

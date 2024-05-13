@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils.image_processor import ImageProcessor
+from utils.logger import Logger
 
 app = Flask(__name__)
+logger = Logger("app.py").get_logger()
 CORS(app)
 
 @app.route('/process_frame', methods=['POST'])
 def process_frame():
+  logger.info("Got request to process image")
   if 'file' not in request.files:
     return jsonify({'error': 'No file part'}), 400
   
@@ -20,6 +23,5 @@ def process_frame():
     return jsonify({'error': 'Failed to process the image', 'details': str(e)}), 500
   
 if __name__ == '__main__':
-    app.run(debug=True)
-
+    app.run(debug=False)
 

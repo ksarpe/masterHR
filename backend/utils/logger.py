@@ -19,14 +19,15 @@ class Logger:
         }
 
         # Define a custom format for the log messages
-        log_format = "%(asctime)s.%(msecs)03d - (%(programname)s:%(lineno)d) - [%(levelname)s] - %(message)s"
+        log_format = "%(asctime)s.%(msecs)03d - (%(programname)s:%(lineno)s - %(funcName)s()) - [%(levelname)s] - %(message)s"
 
         # Define custom colors
         field_styles = {
             'asctime': {'color': 'cyan'},
             'levelname': {'color': 'black', 'bold': True},
             'name': {'color': 'blue'},
-            'programname': {'color': 'cyan'}
+            'programname': {'color': 'cyan'},
+            'funcName': {'color': 'cyan'},
         }
 
         # Install the custom colored logs
