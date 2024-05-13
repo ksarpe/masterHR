@@ -19,8 +19,8 @@ NUM_THREADS = 1 # SHOULD STAY LIKE THIS
 
 #### dev_app.py file configs
 CAP_DEVICE = 0 # Camera device number
-CAP_WIDTH = 960 # Camera width
-CAP_HEIGHT = 540 # Camera height
+CAP_WIDTH = 1280 # Camera width
+CAP_HEIGHT = 960 # Camera height
 STATIC_IMAGE_MODE = True # If True, the app will use the static image instead of the camera TODO: Check it
 MIN_DETECTION_CONFIDENCE = 0.75 # Minimum confidence for detection
 MIN_TRACKING_CONFIDENCE = 0.5 # Minimum confidence for tracking

@@ -3,3 +3,6 @@
 test.py
 __pycache__/
 TODO.txt
+.vscode/
+package-lock.json
+frontend/sign-recognition-project/README.md
