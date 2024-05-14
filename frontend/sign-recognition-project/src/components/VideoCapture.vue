@@ -2,16 +2,18 @@
   <div class="flex h-screen">
     <div class="w-full p-12">
       <div class="bg-gray-400 shadow-lg rounded-3xl p-4">
-        <video ref="videoElement" autoplay class="w-full h-auto rounded-3xl">
-          
-        </video>
-        <button @click="captureFrame" class="mt-4 w-full bg-gray-800 text-white py-2 rounded-3xl hover:bg-blue-600 font-bold text-xl">
+        <video ref="videoElement" autoplay class="w-full h-auto rounded-3xl"></video>
+        <button
+          @click="captureFrame"
+          class="mt-4 w-full bg-gray-800 text-white py-2 rounded-3xl hover:bg-blue-600 font-bold text-xl"
+        >
           Naciśnij tutaj aby przesłać obraz, albo po prostu wciśnij enter!
         </button>
       </div>
       <div class="mt-3 p-3 bg-gray-400 rounded-lg flex space-x-4 text-gray-700 justify-center">
-        <p class="text-2xl font-bold">ZNAK: <span class="font-bold text-blue-700">{{ result.label_name }}</span></p>
-        <p class="text-2xl font-bold">RĘKA: <span class="font-bold text-blue-700">{{ result.handedness }}</span></p>
+        <p class="text-2xl font-bold">
+          CO ZOSTAŁO WYKRYTE: <span class="font-bold text-blue-700">{{ result.label_name }}</span>
+        </p>
       </div>
     </div>
   </div>
@@ -23,16 +25,20 @@ import { ref, onMounted, reactive, onBeforeUnmount, watch } from 'vue'
 const videoElement = ref(null)
 const result = reactive({ label_name: 'nie wykryto', handedness: 'nie wykryto' })
 
-watch(result, (newResult) => {
-  emit('update:result', newResult);
-}, { deep: true });
+watch(
+  result,
+  (newResult) => {
+    emit('update:result', newResult)
+  },
+  { deep: true }
+)
 
-defineProps();
-const emit = defineEmits(['update:result']);
+defineProps()
+const emit = defineEmits(['update:result'])
 
 function handleKeydown(event) {
   if (event.code === 'Enter' || event.keyCode === 13) {
-    captureFrame();
+    captureFrame()
   }
 }
 
@@ -61,7 +67,7 @@ const setupVideo = async () => {
   }
 }
 
-const convert_data = (data) =>{
+const convert_data = (data) => {
   if (data === 'Right') {
     return 'Prawa'
   } else if (data === 'Left') {

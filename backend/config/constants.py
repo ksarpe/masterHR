@@ -6,6 +6,7 @@ MODEL_CP_SAVE_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'point_
 TFLITE_SAVE_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'point_recognizer.tflite') # Path to save the tflite model
 LABELS_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'point_recognizer_labels.csv') # Path to save the labels
 POINTS_SAVE_PATH =  os.path.join(BACKEND_DIR, 'model/point_recognizer', 'points.csv') # Path to save the trained points
+CHAPTERS_PATH = os.path.join(BACKEND_DIR, 'utils/learn/chapter_words') # Path to save the chapters
 
 #### train.py file configs
 RANDOM_SEED = 42 # for generating train and test data
