@@ -11,7 +11,7 @@
           <span class="text-red-400 font-semibold">kliknąć myszką przycisk pod kamerą</span>,
         </p>
         <p class="font-semibold">
-          bądź po prostu <span class="text-red-400 font-semibold">nacisnąć spację</span>, a znak
+          bądź po prostu <span class="text-red-400 font-semibold">nacisnąć enter</span>, a znak
           zostanie zweryfikowany.
         </p>
         <p class="text-xl">

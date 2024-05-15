@@ -29,14 +29,11 @@ def get_words():
   logger.info("Got request to send words to the user")
   if 'chapter' not in request.args:
     return jsonify({'error': 'No chapter provided'}), 400
-  
+    
   chapter = request.args['chapter']
   words = word_generator.get_words(chapter)
   logger.success("Successfully sent words to the user")
   return jsonify({'words': words}), 200
-
-  
-
 
 @app.route('/health', methods=['GET'])
 def health():

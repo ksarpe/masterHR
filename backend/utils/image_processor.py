@@ -59,7 +59,7 @@ class ImageProcessor:
         else:
             self.log.error("Hand not detected")
             return{
-                "label_name": "Try again",
+                "label_name": "Spróbuj ponownie!",
                 "handedness": "None"
             }
         return {

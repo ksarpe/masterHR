@@ -1,5 +1,5 @@
 <template>
-   <tutorial v-if="showTutorial" @close="showTutorial = false" />
+  <tutorial v-if="showTutorial" @close="showTutorial = false" />
   <div class="flex items-center text-center pt-4 px-12">
     <p class="text-2xl font-semibold text-white mr-4">CHAPTER I - POSTAWY I</p>
     <input type="checkbox" v-model="showImagesRandomly" class="form-checkbox h-5 w-5 mr-2 ml-12" />
@@ -72,8 +72,7 @@ function handleResultUpdate(newResult) {
       expected.value = words[0]
       imageSrc.value = 'src/assets/chapter1_images/' + expected.value + '.png'
     }
-  }
-  else{
+  } else {
     // TODO: handle wrong answer
   }
 }
