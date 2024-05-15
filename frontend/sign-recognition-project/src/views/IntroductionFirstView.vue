@@ -1,4 +1,5 @@
 <template>
+   <tutorial v-if="showTutorial" @close="showTutorial = false" />
   <div class="flex items-center text-center pt-4 px-12">
     <p class="text-2xl font-semibold text-white mr-4">CHAPTER I - POSTAWY I</p>
     <input type="checkbox" v-model="showImagesRandomly" class="form-checkbox h-5 w-5 mr-2 ml-12" />
@@ -40,10 +41,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import VideoCapture from '@/components/VideoCapture.vue'
+import Tutorial from '@/components/Tutorial.vue'
 
 const chapter = 1
 const audioSuccess = new Audio('src/assets/audio/success.mp3')
 let words = []
+let showTutorial = ref(true)
 
 const showSuccess = ref(false)
 const expected = ref('')
