@@ -12,10 +12,11 @@ CHAPTERS_PATH = os.path.join(BACKEND_DIR, 'utils/learn/chapter_words') # Path to
 
 #### train.py file configs
 RANDOM_SEED = 42 # for generating train and test data
-NUM_CLASSES = 4 # number of labels
+NUM_CLASSES = 5 # number of labels
 FIT_EPOCHS = 1000 # number of epochs to train the model
 FIT_BATCH_SIZE = 128 # batch size for training
 EVAL_BATCH_SIZE = 128 # batch size for evaluation
+PHOTO_ITERATIONS = 100 # number of photos to take for each label (automatic)
 
 #point_recognizer.py file configs
 NUM_THREADS = 1 # SHOULD STAY LIKE THIS

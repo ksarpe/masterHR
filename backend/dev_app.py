@@ -1,7 +1,7 @@
 import csv
 import copy
 import itertools
-from time import sleep
+import time
 
 import cv2 as cv
 import numpy as np
@@ -16,6 +16,9 @@ def main():
 
     use_bounding_box = True
     mode = 0
+    current_addition = 0
+    photo_iterations = PHOTO_ITERATIONS
+    current_digit = -1
 
     # Camera preparation ###############################################################
     log.info("Preparing camera")
@@ -51,7 +54,23 @@ def main():
         key = cv.waitKey(10)
         if key == ord(QUIT_KEY):  # ESC
             break
-        digit, mode = select_mode(key, mode)
+        digit, mode, new_addition = select_mode(key, mode, current_addition)
+        current_addition = new_addition
+
+        if digit != -1 and photo_iterations == PHOTO_ITERATIONS:
+            current_digit = digit
+            photo_iterations -= 1
+            time.sleep(2)
+        elif photo_iterations < PHOTO_ITERATIONS and photo_iterations > 0:
+            photo_iterations -= 1
+            time.sleep(0.001)
+            digit = current_digit
+        elif photo_iterations == 0:
+            photo_iterations = PHOTO_ITERATIONS
+            if current_digit != -1:
+                print(f"Finished taking photos for this label {current_digit}.")
+            current_digit = -1
+
 
         # Camera capture #####################################################
         ret, image = cap.read()
@@ -72,50 +91,39 @@ def main():
         if results.multi_hand_landmarks is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
-                # Bounding box calculation
                 bounding_box = calc_rect(debug_img, hand_landmarks)
-                # landmark calculation
                 landmark_list = calc_landmark_list(debug_img, hand_landmarks)
+                pre_processed_landmark_list = pre_process_landmark(landmark_list)
 
-                # Conversion to relative coordinates / normalized coordinates
-                pre_processed_landmark_list = pre_process_landmark(
-                    landmark_list)
+                if mode >= 1:
+                    log_to_csv(digit, mode, pre_processed_landmark_list)
+                    break
 
-                # Write to the dataset file
-                logging_csv(digit, mode, pre_processed_landmark_list)
-
-                # Hand landmark classification
                 hand_landmark_id, confidence = point_recognizer(pre_processed_landmark_list, show_confidence=True)
 
-                # Drawing part
                 debug_img = draw_bounding_rect(use_bounding_box, debug_img, bounding_box)
                 debug_img = draw_landmarks(debug_img, landmark_list)
-                debug_img = draw_hand_text(
-                    debug_img,
-                    bounding_box,
-                    handedness,
-                    point_recognizer_labels[hand_landmark_id],
-                    confidence,
-                )
+                debug_img = draw_hand_text(debug_img, bounding_box, handedness, point_recognizer_labels[hand_landmark_id], confidence)
 
-        debug_img = draw_info(debug_img, mode, digit)
-
-        # Screen reflection #############################################################
+        debug_img = draw_info(debug_img, mode, current_addition, digit)
         cv.imshow('landmark Language Recognition', debug_img)
 
     cap.release()
     cv.destroyAllWindows()
 
 
-def select_mode(key, mode):
+def select_mode(key, mode, addition):
     digit = -1
     if 48 <= key <= 57:  # 0 ~ 9 (If is in 'R(record)' mode then it will log this label point to training set)
-        digit = key - 48
+        digit = key - 48 + addition
     if key == 110:  # n (Normal mode)
         mode = 0
+        addition = 0 # we reset addition
     if key == 114:  # r (Log to training set)
+        if mode == 1:
+            addition += 10 #we add ten to the addition so if we want to log 10 we can click 0 and it will add 10
         mode = 1
-    return digit, mode
+    return digit, mode, addition
 
 
 def calc_rect(image, landmarks):
@@ -181,10 +189,8 @@ def pre_process_landmark(landmark_list):
     return temp_landmark_list
 
 
-def logging_csv(digit, mode, landmark_list):
-    if mode == 0:
-        pass
-    if mode == 1 and (0 <= digit <= 9):
+def log_to_csv(digit, mode, landmark_list):
+    if mode == 1 and (0 <= digit <= 9999):
         csv_path = POINTS_SAVE_PATH
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
@@ -411,23 +417,28 @@ def draw_hand_text(image, bounding_box, handedness, hand_landmark_text, confiden
     return image
 
 #TODO: Check the licenses for this code
-def draw_info(image, mode, digit):
-    status_labels = ["NORMAL", "RECORD"]
-    vertical_offset = 20
+def draw_info(image, mode, addition, digit):
+    status_labels = ["DEBUG", "RECORD"]
+    vertical_offset = 30
     text_color = (255, 255, 255)  # White color
     font = cv.FONT_HERSHEY_PLAIN
     font_scale = 1.5
     line_type = cv.LINE_AA
     thickness = 1
 
-    if 0 <= mode <= 1:
-        cv.putText(image, f"MODE:{status_labels[mode]}", (10, vertical_offset),
-                   font, font_scale, text_color, thickness, line_type)
-
-        if 0 <= digit <= 9:
-            # Annotate the image with the number
-            cv.putText(image, f"NUM:{digit}", (10, vertical_offset + 20),
-                       font, font_scale, text_color, thickness, line_type)
+    cv.putText(image, f"MODE:{status_labels[mode]}", (10, vertical_offset),
+                font, font_scale, text_color, thickness, line_type)
+    cv.putText(image, f"ADDITION:{addition}", (10, vertical_offset + 20),
+                font, font_scale, text_color, thickness, line_type)
+    
+    if mode == 1:
+        if digit != -1:
+            cv.putText(image, f"Currently logging for :{digit}", (10, vertical_offset + 40),
+                    font, font_scale, text_color, thickness, line_type)
+        else:
+            cv.putText(image, f"Currently not logging", (10, vertical_offset + 40),
+                    font, font_scale, text_color, thickness, line_type)
+    
     return image
 
 

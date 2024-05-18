@@ -34,8 +34,8 @@ model.compile(
     metrics=['accuracy'] #Accuracy for how often the model is right, Precision for how often the model is right when it says it is right
 )
 
-checkpoint = tf.keras.callbacks.ModelCheckpoint(model_cp_save_path, verbose=1, save_weights_only=False, save_best_only=True)
-earlystop = tf.keras.callbacks.EarlyStopping(patience=20, verbose=1) # wait 20 epochs before stopping (val_loss check)
+checkpoint = tf.keras.callbacks.ModelCheckpoint(model_cp_save_path, verbose=0, save_weights_only=False, save_best_only=True)
+earlystop = tf.keras.callbacks.EarlyStopping(patience=30, verbose=0) # wait 20 epochs before stopping (val_loss check)
 
 model.fit(
     X_train,
