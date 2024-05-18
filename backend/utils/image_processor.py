@@ -8,64 +8,57 @@ from PIL import Image
 
 from config.constants import *
 from model.point_recognizer.point_recognizer import PointRecognizer
-from utils.logger import Logger
-
-class ImageProcessor:
-    def __init__(self):
-        self.log = Logger("ImageProcessor").get_logger()
-        self.labels = self.get_labels()
     
 
-    def get_labels(self):
-        with open(LABELS_PATH, encoding='utf-8-sig') as f:
-          point_recognizer_labels = csv.reader(f)
-          point_recognizer_labels = [
-              row[0] for row in point_recognizer_labels
-          ]
-        return point_recognizer_labels
+def get_labels():
+    with open(LABELS_PATH, encoding='utf-8-sig') as f:
+        point_recognizer_labels = csv.reader(f)
+        point_recognizer_labels = [
+            row[0] for row in point_recognizer_labels
+        ]
+    return point_recognizer_labels
 
-    # It will return dictionary with:
-    # - label_name: e.g "hello"
-    # - handedness: e.g "Right"
-    def process(self, image):
-        self.log.info("Processing image")
-        mp_hands = mp.solutions.hands
-        hands = mp_hands.Hands(
-            static_image_mode=STATIC_IMAGE_MODE,
-            max_num_hands=HANDS_NUM,
-            min_detection_confidence=MIN_DETECTION_CONFIDENCE,
-            min_tracking_confidence=MIN_TRACKING_CONFIDENCE
-        )
+# It will return dictionary with:
+# - label_name: e.g "hello"
+# - handedness: e.g "Right"
+def process(image):
+    labels = get_labels()
+    mp_hands = mp.solutions.hands
+    hands = mp_hands.Hands(
+        static_image_mode=STATIC_IMAGE_MODE,
+        max_num_hands=HANDS_NUM,
+        min_detection_confidence=MIN_DETECTION_CONFIDENCE,
+        min_tracking_confidence=MIN_TRACKING_CONFIDENCE
+    )
 
-        point_recognizer = PointRecognizer()
+    point_recognizer = PointRecognizer()
 
-        image = Image.open(image.stream).convert('RGB')
-        image = np.array(image)
-        image = cv.flip(image, 1)
-        
-        image.flags.writeable = False
-        results = hands.process(image)
-        image.flags.writeable = True
-        
+    image = Image.open(image.stream).convert('RGB')
+    image = np.array(image)
+    image = cv.flip(image, 1)
+    
+    image.flags.writeable = False
+    results = hands.process(image)
+    image.flags.writeable = True
+    
 
-        if results.multi_hand_landmarks is not None:
-            for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
-                                                  results.multi_handedness):
-                
-                landmark_list = calc_landmark_list(image, hand_landmarks)
-                pre_processed_landmark_list = pre_process_landmark(
-                    landmark_list)
-                hand_landmark_id = point_recognizer(pre_processed_landmark_list)
-        else:
-            self.log.error("Hand not detected")
-            return{
-                "label_name": "Spróbuj ponownie!",
-                "handedness": "None"
-            }
-        return {
-            "label_name": self.labels[hand_landmark_id],
-            "handedness": handedness.classification[0].label[0:],
-            }
+    if results.multi_hand_landmarks is not None:
+        for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
+                                                results.multi_handedness):
+            
+            landmark_list = calc_landmark_list(image, hand_landmarks)
+            pre_processed_landmark_list = pre_process_landmark(
+                landmark_list)
+            hand_landmark_id = point_recognizer(pre_processed_landmark_list)
+    else:
+        return{
+            "label_name": "Spróbuj ponownie!",
+            "handedness": "None"
+        }
+    return {
+        "label_name": labels[hand_landmark_id],
+        "handedness": handedness.classification[0].label[0:],
+        }
 
 def calc_landmark_list(image, landmarks):
     image_width, image_height = image.shape[1], image.shape[0]

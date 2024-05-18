@@ -1,6 +1,7 @@
 import csv
 import copy
 import itertools
+from time import sleep
 
 import cv2 as cv
 import numpy as np
@@ -32,7 +33,7 @@ def main():
         min_tracking_confidence=MIN_TRACKING_CONFIDENCE,
     )
 
-    point_recognizer = PointRecognizer() # Initialize the point recognizer on the pre-trained model
+    point_recognizer = PointRecognizer(testing_mode=True) # Initialize the point recognizer on the pre-trained model
 
     # Read labels ###########################################################
     log.info("Reading classifier labels")
@@ -46,7 +47,6 @@ def main():
 
     log.info("Steping into main loop")
     while True:
-
         # Process Key (ESC: end) #################################################
         key = cv.waitKey(10)
         if key == ord(QUIT_KEY):  # ESC
@@ -85,7 +85,7 @@ def main():
                 logging_csv(digit, mode, pre_processed_landmark_list)
 
                 # Hand landmark classification
-                hand_landmark_id = point_recognizer(pre_processed_landmark_list)
+                hand_landmark_id, confidence = point_recognizer(pre_processed_landmark_list, show_confidence=True)
 
                 # Drawing part
                 debug_img = draw_bounding_rect(use_bounding_box, debug_img, bounding_box)
@@ -95,6 +95,7 @@ def main():
                     bounding_box,
                     handedness,
                     point_recognizer_labels[hand_landmark_id],
+                    confidence,
                 )
 
         debug_img = draw_info(debug_img, mode, digit)
@@ -387,13 +388,14 @@ def draw_bounding_rect(use_bounding_box, image, bounding_box):
     return image
 
 
-def draw_hand_text(image, bounding_box, handedness, hand_landmark_text):
+def draw_hand_text(image, bounding_box, handedness, hand_landmark_text, confidence):
     cv.rectangle(image, (bounding_box[0], bounding_box[1]), (bounding_box[2], bounding_box[1] - 22),
                  (0, 0, 0), -1)
 
     info_text = handedness.classification[0].label[0:]
     if hand_landmark_text != "":
         info_text +=  f':{hand_landmark_text}'
+    info_text += f'({confidence}%)'
 
     text_position = (bounding_box[0] + 5, bounding_box[1] - 4)
     text_font = cv.FONT_HERSHEY_SIMPLEX
@@ -411,10 +413,10 @@ def draw_hand_text(image, bounding_box, handedness, hand_landmark_text):
 #TODO: Check the licenses for this code
 def draw_info(image, mode, digit):
     status_labels = ["NORMAL", "RECORD"]
-    vertical_offset = 90
+    vertical_offset = 20
     text_color = (255, 255, 255)  # White color
     font = cv.FONT_HERSHEY_PLAIN
-    font_scale = 0.6
+    font_scale = 1.5
     line_type = cv.LINE_AA
     thickness = 1
 

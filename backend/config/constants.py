@@ -2,15 +2,17 @@ import os
 # PATHS, absolute paths for the project
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
 DATASET_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'points.csv') # Path to the dataset (created by dev_app.py) 
-MODEL_CP_SAVE_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'point_recognizer.hdf5') # Path to save the model
+MODEL_CP_SAVE_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'point_recognizer.keras') # Path to save the model
+TEST_MODEL_CP_SAVE_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer/test_models', 'test_point_recognizer.keras') # Path to save the test model
 TFLITE_SAVE_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'point_recognizer.tflite') # Path to save the tflite model
+TEST_TFLITE_SAVE_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer/test_models', 'test_point_recognizer.tflite') # Path to save the test tflite model
 LABELS_PATH = os.path.join(BACKEND_DIR, 'model/point_recognizer', 'point_recognizer_labels.csv') # Path to save the labels
 POINTS_SAVE_PATH =  os.path.join(BACKEND_DIR, 'model/point_recognizer', 'points.csv') # Path to save the trained points
 CHAPTERS_PATH = os.path.join(BACKEND_DIR, 'utils/learn/chapter_words') # Path to save the chapters
 
 #### train.py file configs
 RANDOM_SEED = 42 # for generating train and test data
-NUM_CLASSES = 3 # number of labels
+NUM_CLASSES = 4 # number of labels
 FIT_EPOCHS = 1000 # number of epochs to train the model
 FIT_BATCH_SIZE = 128 # batch size for training
 EVAL_BATCH_SIZE = 128 # batch size for evaluation

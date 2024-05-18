@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils.image_processor import ImageProcessor
+import utils.image_processor as image_processor
 from utils.logger import Logger
 import utils.learn.word_generator as word_generator
 
@@ -10,13 +10,12 @@ CORS(app)
 
 @app.route('/process_frame', methods=['POST'])
 def process_frame():
-  logger.info("Got request to process image")
+  logger.info("Got request to process the image")
   if 'file' not in request.files:
     return jsonify({'error': 'No file part'}), 400
   
   file = request.files['file']
 
-  image_processor = ImageProcessor()
   try:
     response_dict = image_processor.process(file)
     logger.success("Successfully processed the image")
