@@ -55,8 +55,12 @@ def main():
         if key == ord(QUIT_KEY):  # ESC
             break
         digit, mode, new_addition = select_mode(key, mode, current_addition)
-        current_addition = new_addition
+        current_addition = new_addition # For increasing signs number more than just 0-9, R-R-R click will increase it by 10
 
+
+        # Automatic photo capture
+        # It will wait two seconds and then just set the digit to the clicked one
+        # Because digit is set, it will log PHOTO_ITERATIONS times the same digit with photo to csv
         if digit != -1 and photo_iterations == PHOTO_ITERATIONS:
             current_digit = digit
             photo_iterations -= 1
@@ -99,7 +103,10 @@ def main():
                     log_to_csv(digit, mode, pre_processed_landmark_list)
                     break
 
-                hand_landmark_id, confidence = point_recognizer(pre_processed_landmark_list, show_confidence=True)
+                hand_landmark_id, confidence, confidence_list = point_recognizer(pre_processed_landmark_list, show_confidence=True, confidence_list=key==ord('c'))
+                if key == ord('c'):
+                    for index, confidence in enumerate(confidence_list):
+                        print(f"{point_recognizer_labels[index]}: {round(confidence / 100, 2) * 100}%")
 
                 debug_img = draw_bounding_rect(use_bounding_box, debug_img, bounding_box)
                 debug_img = draw_landmarks(debug_img, landmark_list)

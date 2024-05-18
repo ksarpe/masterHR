@@ -21,7 +21,7 @@ class PointRecognizer(object):
         self.input_details = self.interpreter.get_input_details() #from model
         self.output_details = self.interpreter.get_output_details() #from model
 
-    def __call__(self, landmark_list, show_confidence=False):
+    def __call__(self, landmark_list, show_confidence=False, confidence_list=False):
         self.interpreter.set_tensor(
             self.input_details[0]['index'],
             np.array([landmark_list], dtype=np.float32))
@@ -37,6 +37,10 @@ class PointRecognizer(object):
         confidence_percent = round(confidence * 100, 2)
 
         if show_confidence:
-            return result_index, confidence_percent
+            if confidence_list:
+                confidence_percentages = np.round(result * 100, 2)
+                return result_index, confidence_percent, confidence_percentages
+            return result_index, confidence_percent, []
+        
         
         return result_index
