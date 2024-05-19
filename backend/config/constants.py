@@ -12,11 +12,11 @@ CHAPTERS_PATH = os.path.join(BACKEND_DIR, 'utils/learn/chapter_words') # Path to
 
 #### train.py file configs
 RANDOM_SEED = 42 # for generating train and test data
-NUM_CLASSES = 5 # number of labels
+NUM_CLASSES = 2 # number of labels
 FIT_EPOCHS = 1000 # number of epochs to train the model
 FIT_BATCH_SIZE = 128 # batch size for training
 EVAL_BATCH_SIZE = 64 # batch size for evaluation
-PHOTO_ITERATIONS = 500 # number of photos to take for each label (automatic)
+PHOTO_ITERATIONS = 400 # number of photos to take for each label (automatic)
 
 #point_recognizer.py file configs
 NUM_THREADS = 1 # SHOULD STAY LIKE THIS
@@ -28,6 +28,7 @@ CAP_HEIGHT = 960 # Camera height
 STATIC_IMAGE_MODE = True # If True, the app will use the static image instead of the camera TODO: Check it
 MIN_DETECTION_CONFIDENCE = 0.75 # Minimum confidence for detection
 MIN_TRACKING_CONFIDENCE = 0.5 # Minimum confidence for tracking
+FACE_MODEL_SELECTION = 0 # 0 for short range (up to two meters), 1 for long range
 HANDS_NUM = 2 # Number of hands to detect
 QUIT_KEY = 'q' # Key to quit the app
 #### dev.py file configs

@@ -21,10 +21,10 @@ class PointRecognizer(object):
         self.input_details = self.interpreter.get_input_details() #from model
         self.output_details = self.interpreter.get_output_details() #from model
 
-    def __call__(self, landmark_list, show_confidence=False, confidence_list=False):
+    def __call__(self, nose_coords, landmark_list, show_confidence=False, confidence_list=False):
         self.interpreter.set_tensor(
             self.input_details[0]['index'],
-            np.array([landmark_list], dtype=np.float32))
+            np.array([[nose_coords.x, nose_coords.y] + landmark_list], dtype=np.float32))
         self.interpreter.invoke()
 
         #After the invocation, we can get the output tensor

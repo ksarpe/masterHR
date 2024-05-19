@@ -35,6 +35,12 @@ def main():
         min_detection_confidence=MIN_DETECTION_CONFIDENCE,
         min_tracking_confidence=MIN_TRACKING_CONFIDENCE,
     )
+    mp_face = mp.solutions.face_detection
+    face = mp_face.FaceDetection(
+        min_detection_confidence=MIN_DETECTION_CONFIDENCE,
+        model_selection=FACE_MODEL_SELECTION
+    )
+
 
     point_recognizer = PointRecognizer(testing_mode=True) # Initialize the point recognizer on the pre-trained model
 
@@ -64,11 +70,11 @@ def main():
         if digit != -1 and photo_iterations == PHOTO_ITERATIONS:
             current_digit = digit
             photo_iterations -= 1
-            time.sleep(2)
+            time.sleep(2)            
         elif photo_iterations < PHOTO_ITERATIONS and photo_iterations > 0:
-            photo_iterations -= 1
             time.sleep(0.001)
             digit = current_digit
+            photo_iterations -= 1 #decrement only if we added something to the dataset
         elif photo_iterations == 0:
             photo_iterations = PHOTO_ITERATIONS
             if current_digit != -1:
@@ -89,21 +95,32 @@ def main():
 
         image.flags.writeable = False
         results = hands.process(image)
+        face_results = face.process(image)
         image.flags.writeable = True
 
-        #  ####################################################################
-        if results.multi_hand_landmarks is not None:
+        nose_tip_coords = None
+        
+        #Process face and find nose tip
+        if face_results.detections is not None:
+            for detection in face_results.detections:
+                nose_tip_coords = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.NOSE_TIP)
+                debug_img = draw_nose_tip(debug_img, nose_tip_coords)
+        else:
+            nose_tip_coords = None                
+
+        #Process hands
+        if results.multi_hand_landmarks is not None and nose_tip_coords is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
                 bounding_box = calc_rect(debug_img, hand_landmarks)
                 landmark_list = calc_landmark_list(debug_img, hand_landmarks)
                 pre_processed_landmark_list = pre_process_landmark(landmark_list)
-
-                if mode >= 1:
-                    log_to_csv(digit, mode, pre_processed_landmark_list)
+                
+                if mode >= 1 and digit != -1: # log to CSV only if we are in record mode and we have a nose ti                       
+                    log_to_csv(digit, nose_tip_coords, mode, pre_processed_landmark_list)
                     break
 
-                hand_landmark_id, confidence, confidence_list = point_recognizer(pre_processed_landmark_list, show_confidence=True, confidence_list=key==ord('c'))
+                hand_landmark_id, confidence, confidence_list = point_recognizer(nose_tip_coords, pre_processed_landmark_list, show_confidence=True, confidence_list=key==ord('c'))
                 if key == ord('c'):
                     for index, confidence in enumerate(confidence_list):
                         print(f"{point_recognizer_labels[index]}: {round(confidence / 100, 2) * 100}%")
@@ -196,12 +213,13 @@ def pre_process_landmark(landmark_list):
     return temp_landmark_list
 
 
-def log_to_csv(digit, mode, landmark_list):
+def log_to_csv(digit, nose_tip_corrds, mode, landmark_list):
+    nose_list = [nose_tip_corrds.x, nose_tip_corrds.y]
     if mode == 1 and (0 <= digit <= 9999):
         csv_path = POINTS_SAVE_PATH
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([digit, *landmark_list])
+            writer.writerow([digit, *nose_list, *landmark_list])
     return
 
 
@@ -421,6 +439,13 @@ def draw_hand_text(image, bounding_box, handedness, hand_landmark_text, confiden
     cv.putText(image, info_text, text_position, text_font, text_scale,
                text_color, text_thickness, text_line_type)
 
+    return image
+
+def draw_nose_tip(image, nose_tip):
+    if nose_tip is not None:
+        x, y = int(nose_tip.x * image.shape[1]), int(nose_tip.y * image.shape[0])
+        cv.circle(image, (x, y), 10, (255, 255, 255), -1)
+        cv.circle(image, (x, y), 10, (0, 0, 0), 1)
     return image
 
 #TODO: Check the licenses for this code
