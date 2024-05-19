@@ -4,14 +4,14 @@ import numpy as np
 from PIL import Image
 
 from config.constants import *
-from utils.utils import get_labels, configure_model, calc_landmark_list, pre_process_landmark
+from utils.utils import load_labels, configure_model, calc_landmark_list, pre_process_landmark
 from model.point_recognizer.point_recognizer import PointRecognizer
 
 # It will return dictionary with:
 # - label_name: e.g "hello"
 # - handedness: e.g "Right"
 def process(image):
-    labels = get_labels()
+    labels = load_labels()
     hands, face, mp_face = configure_model()
     point_recognizer = PointRecognizer()
 
