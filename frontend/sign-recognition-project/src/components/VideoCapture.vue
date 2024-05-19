@@ -23,7 +23,7 @@
 import { ref, onMounted, reactive, onBeforeUnmount, watch } from 'vue'
 
 const videoElement = ref(null)
-const result = reactive({ label_name: 'nie wykryto', handedness: 'nie wykryto' })
+const result = reactive({ label_name: 'nie wykryto'})
 
 watch(
   result,
@@ -67,16 +67,6 @@ const setupVideo = async () => {
   }
 }
 
-const convert_data = (data) => {
-  if (data === 'Right') {
-    return 'Prawa'
-  } else if (data === 'Left') {
-    return 'Lewa'
-  } else {
-    return 'nie wykryto'
-  }
-}
-
 const captureFrame = () => {
   const canvas = document.createElement('canvas')
   if (videoElement.value) {
@@ -96,7 +86,6 @@ const captureFrame = () => {
         const data = await response.json()
         if (response.ok) {
           result.label_name = data.label_name
-          result.handedness = convert_data(data.handedness)
         } else {
           console.error('Error from server:', data)
         }

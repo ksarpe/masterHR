@@ -50,7 +50,7 @@ let showTutorial = ref(true)
 
 const showSuccess = ref(false)
 const expected = ref('')
-const result = ref({ label_name: 'none', handedness: 'none' })
+const result = ref({ label_name: 'none'})
 const imageSrc = ref('')
 const showImagesRandomly = ref(false) // This will control the random image display
 

@@ -30,6 +30,11 @@ def process(image):
         min_detection_confidence=MIN_DETECTION_CONFIDENCE,
         min_tracking_confidence=MIN_TRACKING_CONFIDENCE
     )
+    mp_face = mp.solutions.face_detection
+    face = mp_face.FaceDetection(
+        min_detection_confidence=MIN_DETECTION_CONFIDENCE,
+        model_selection=FACE_MODEL_SELECTION
+    )
 
     point_recognizer = PointRecognizer()
 
@@ -39,25 +44,25 @@ def process(image):
     
     image.flags.writeable = False
     results = hands.process(image)
+    face_results = face.process(image)
     image.flags.writeable = True
     
 
-    if results.multi_hand_landmarks is not None:
+    if results.multi_hand_landmarks is not None and face_results.detections is not None:
         for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                 results.multi_handedness):
             
             landmark_list = calc_landmark_list(image, hand_landmarks)
             pre_processed_landmark_list = pre_process_landmark(
                 landmark_list)
-            hand_landmark_id = point_recognizer(pre_processed_landmark_list)
+            nose_tip_coords = mp_face.get_key_point(face_results.detections[0], mp_face.FaceKeyPoint.NOSE_TIP)
+            hand_landmark_id = point_recognizer(nose_tip_coords, pre_processed_landmark_list)
     else:
         return{
             "label_name": "Spróbuj ponownie!",
-            "handedness": "None"
         }
     return {
         "label_name": labels[hand_landmark_id],
-        "handedness": handedness.classification[0].label[0:],
         }
 
 def calc_landmark_list(image, landmarks):
