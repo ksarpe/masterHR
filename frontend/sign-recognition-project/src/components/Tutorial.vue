@@ -7,15 +7,19 @@
         <p>Po prawej stronie możesz zobaczyć znak, którego obecnie się uczysz.</p>
         <br />
         <p class="font-semibold">
-          Po pokazaniu znaku do kamery, możesz
-          <span class="text-red-400 font-semibold">kliknąć myszką przycisk pod kamerą</span>,
+          <span class="text-red-400 font-semibold">Kliknij myszką na przycisk pod Twoją kamerą</span
+          >, a za dwie sekundy zostanie zrobione zdjęcie.
         </p>
         <p class="font-semibold">
-          bądź po prostu <span class="text-red-400 font-semibold">nacisnąć enter</span>, a znak
-          zostanie zweryfikowany.
+          bądź po prostu <span class="text-red-400 font-semibold">naciśnij enter</span>, a również
+          za dwie sekundy zostanie zrobione zdjęcie.
         </p>
         <p class="text-xl">
           (w lewym dolnym rogu znajduje się również podpowiedź ostatnio wykrytego znaku)
+        </p>
+        <br>
+        <p class="text-2xl">
+          U góry znajdziesz również <span class="text-blue-400 font-semibold">modyfikatory</span>, które pozwolą Ci dostosować sposób nauki do swoich oczekiwań.
         </p>
       </div>
       <button

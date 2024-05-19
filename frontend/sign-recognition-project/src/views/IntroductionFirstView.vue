@@ -3,12 +3,23 @@
   <div class="flex items-center text-center pt-4 px-12">
     <p class="text-2xl font-semibold text-white mr-4">CHAPTER I - POSTAWY I</p>
     <input type="checkbox" v-model="showImagesRandomly" class="form-checkbox h-5 w-5 mr-2 ml-12" />
-    <span class="text-white">Losowo pokazuj bez zdjęć</span>
+    <span class="text-white">Losowo pokazuj bez zdjęć (50%)</span>
   </div>
 
   <div v-if="showSuccess" class="absolute inset-0 flex justify-center items-center">
     <div class="animate-bounce bg-green-500 text-white font-bold p-10 rounded-2xl text-xl">
       DOBRZE!
+    </div>
+  </div>
+  <div v-if="showBad" class="absolute inset-0 flex justify-center items-center">
+    <div class="animate-bounce bg-red-500 text-white font-bold p-10 rounded-2xl text-xl">
+      ŹLE :(
+    </div>
+  </div>
+  <div v-if="showUnknown" class="absolute inset-0 flex justify-center items-center">
+    <div class="animate-bounce bg-yellow-500 text-white font-bold p-10 rounded-2xl text-xl">
+      Nie wykryto! <br>
+      Spróbuj jeszcze raz.
     </div>
   </div>
   <div class="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -49,6 +60,8 @@ let words = []
 let showTutorial = ref(true)
 
 const showSuccess = ref(false)
+const showBad = ref(false)
+const showUnknown = ref(false)
 const expected = ref('')
 const result = ref({ label_name: 'none'})
 const imageSrc = ref('')
@@ -56,6 +69,7 @@ const showImagesRandomly = ref(false) // This will control the random image disp
 
 function handleResultUpdate(newResult) {
   result.value = newResult
+  console.log(showImagesRandomly.value)
   console.log('Result:', result.value.label_name)
   console.log('Expected:', expected.value)
   if (result.value.label_name === expected.value) {
@@ -70,10 +84,31 @@ function handleResultUpdate(newResult) {
       fetchWords()
     } else {
       expected.value = words[0]
-      imageSrc.value = 'src/assets/chapter1_images/' + expected.value + '.png'
+      if (!showImagesRandomly.value) {
+        imageSrc.value = 'src/assets/chapter1_images/' + expected.value + '.png'
+      } else {
+        // calculate change to not display an image
+        let random = Math.floor(Math.random() * 2)
+        if (random === 0) {
+          imageSrc.value = ''
+        } else {
+          imageSrc.value = 'src/assets/chapter1_images/' + expected.value + '.png'
+        }
+      }
     }
-  } else {
-    // TODO: handle wrong answer
+  }
+  else if(result.value.label_name === 'Spróbuj ponownie!') {
+    showUnknown.value = true
+    setTimeout(() => {
+      showUnknown.value = false
+    }, 2000) // Hide success message after 2 second
+  }
+  else {
+    showBad.value = true
+    //audioSuccess.play()
+    setTimeout(() => {
+      showBad.value = false
+    }, 1000) // Hide success message after 2 second
   }
 }
 

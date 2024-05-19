@@ -7,7 +7,8 @@
           @click="captureFrame"
           class="mt-4 w-full bg-gray-800 text-white py-2 rounded-3xl hover:bg-blue-600 font-bold text-xl"
         >
-          Naciśnij tutaj aby przesłać obraz, albo po prostu wciśnij enter!
+          <span v-if="IdleState">Naciśnij tutaj albo naciśnij ENTER a za dwie sekundy zrobi się zdjęcie! </span>
+          <span v-else>Ustaw się! zdjęcie się robi...</span>
         </button>
       </div>
       <div class="mt-3 p-3 bg-gray-400 rounded-lg flex space-x-4 text-gray-700 justify-center">
@@ -23,6 +24,7 @@
 import { ref, onMounted, reactive, onBeforeUnmount, watch } from 'vue'
 
 const videoElement = ref(null)
+const IdleState = ref(true)
 const result = reactive({ label_name: 'nie wykryto'})
 
 watch(
@@ -68,7 +70,9 @@ const setupVideo = async () => {
 }
 
 const captureFrame = () => {
-  const canvas = document.createElement('canvas')
+  IdleState.value = false
+  setTimeout(() => {
+    const canvas = document.createElement('canvas')
   if (videoElement.value) {
     canvas.width = videoElement.value.videoWidth
     canvas.height = videoElement.value.videoHeight
@@ -86,6 +90,7 @@ const captureFrame = () => {
         const data = await response.json()
         if (response.ok) {
           result.label_name = data.label_name
+          IdleState.value = true
         } else {
           console.error('Error from server:', data)
         }
@@ -93,6 +98,6 @@ const captureFrame = () => {
         console.error('Error:', error)
       }
     })
-  }
+  }}, 2000)
 }
 </script>
