@@ -1,4 +1,3 @@
-import click
 import numpy as np
 import tensorflow as tf
 import pandas as pd
@@ -80,27 +79,3 @@ converter.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_model = converter.convert()
 
 open(tflite_save_path, 'wb').write(tflite_model)
-
-@click.command()
-@click.option('--with-test', is_flag=True, help='Test the model')
-def test_model(with_test):
-    if not with_test:
-        print("Not testing the model...")
-        return
-    print("Testing the model...")
-    interpreter = tf.lite.Interpreter(model_path=tflite_save_path)
-    interpreter.allocate_tensors()
-
-    input_details = interpreter.get_input_details()
-    output_details = interpreter.get_output_details()
-
-    interpreter.set_tensor(input_details[0]['index'], np.array([X_test[0]]))
-
-    interpreter.invoke()
-    tflite_results = interpreter.get_tensor(output_details[0]['index'])
-
-    print(np.squeeze(tflite_results))
-    print(np.argmax(np.squeeze(tflite_results)))
-
-
-test_model()
