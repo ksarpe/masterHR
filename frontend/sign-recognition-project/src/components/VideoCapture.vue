@@ -7,7 +7,7 @@
           @click="captureFrame"
           class="mt-4 w-full bg-gray-800 text-white py-2 rounded-3xl hover:bg-blue-600 font-bold text-xl"
         >
-          <span v-if="IdleState">Naciśnij tutaj albo naciśnij ENTER a za dwie sekundy zrobi się zdjęcie! </span>
+          <span v-if="IdleState">Naciśnij tutaj albo naciśnij ENTER a po dwóch sekundach zrobi się zdjęcie! </span>
           <span v-else>Ustaw się! zdjęcie się robi...</span>
         </button>
       </div>
@@ -89,6 +89,7 @@ const captureFrame = () => {
         })
         const data = await response.json()
         if (response.ok) {
+          result.label_name = 'test'
           result.label_name = data.label_name
           IdleState.value = true
         } else {
