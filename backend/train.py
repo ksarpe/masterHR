@@ -12,8 +12,8 @@ from config.constants import *
 model_cp_save_path = TEST_MODEL_CP_SAVE_PATH
 tflite_save_path = TEST_TFLITE_SAVE_PATH
 
-X_dataset = np.loadtxt(DATASET_PATH, delimiter=',', dtype='float32', usecols=list(range(1, (21 * 2) + 3))) # we got coordinates of 21 points hands + 2 of nose TIP
-y_dataset = np.loadtxt(DATASET_PATH, delimiter=',', dtype='int32', usecols=(0)) # we got the labels
+X_dataset = np.loadtxt(DATASET_PATH2, delimiter=',', dtype='float32', usecols=list(range(1, (21 * 2) + 3))) # we got coordinates of 21 points hands + 2 of nose TIP
+y_dataset = np.loadtxt(DATASET_PATH2, delimiter=',', dtype='int32', usecols=(0)) # we got the labels
 X_train, X_test, y_train, y_test = train_test_split(X_dataset, y_dataset, train_size=0.75, random_state=RANDOM_SEED)
 
 model = tf.keras.models.Sequential([

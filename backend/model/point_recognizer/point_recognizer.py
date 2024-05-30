@@ -10,9 +10,12 @@ class PointRecognizer(object):
         model_path=TFLITE_SAVE_PATH,
         num_threads=NUM_THREADS,
         testing_mode=False,
+        chapter_number=0,
     ):
         if testing_mode:
             model_path = TEST_TFLITE_SAVE_PATH
+        if chapter_number == 2:
+            model_path = TFLITE_SAVE_PATH2
         
         self.interpreter = tf.lite.Interpreter(model_path=model_path,
                                                num_threads=num_threads)

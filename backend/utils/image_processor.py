@@ -9,11 +9,10 @@ from model.point_recognizer.point_recognizer import PointRecognizer
 
 # It will return dictionary with:
 # - label_name: e.g "hello"
-# - handedness: e.g "Right"
-def process(image):
-    labels = load_labels()
+def process(image, chapter=0):
+    labels = load_labels() if chapter == 0 else load_labels(chapter=2)
     hands, face, mp_face = configure_model()
-    point_recognizer = PointRecognizer()
+    point_recognizer = PointRecognizer(chapter=2)
 
     image = Image.open(image.stream).convert('RGB')
     image = np.array(image)

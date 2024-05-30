@@ -22,6 +22,21 @@ def process_frame():
     return jsonify(response_dict), 200
   except Exception as e:
     return jsonify({'error': 'Failed to process the image', 'details': str(e)}), 500
+
+@app.route('/process_frame_alphabet', methods=['POST'])
+def process_frame():
+  logger.info("Got request to process the image")
+  if 'file' not in request.files:
+    return jsonify({'error': 'No file part'}), 400
+  
+  file = request.files['file']
+
+  try:
+    response_dict = image_processor.process(file, chapter=2)
+    logger.success("Successfully processed the image")
+    return jsonify(response_dict), 200
+  except Exception as e:
+    return jsonify({'error': 'Failed to process the image', 'details': str(e)}), 500
   
 @app.route('/get_words', methods=['GET'])
 def get_words():
@@ -39,5 +54,5 @@ def health():
   return jsonify({'status': 'Healthy'}), 200
     
 if __name__ == '__main__':
-    app.run(debug=False, host="0.0.0.0")
+    app.run(debug=False)
 

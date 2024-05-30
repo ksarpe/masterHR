@@ -24,8 +24,8 @@ def main():
     log.info("Initializing camera and models")
     cap = initialize_camera()
     hands, face, mp_face = configure_model()
-    point_recognizer_labels = load_labels()
-    point_recognizer = PointRecognizer(testing_mode=True) # Initialize the point recognizer on the pre-trained model
+    point_recognizer_labels = load_labels(chapter=2)
+    point_recognizer = PointRecognizer(testing_mode=True, chapter_number=2) # Initialize the point recognizer on the pre-trained model
 
     log.info("Steping into main loop")
     while True:
@@ -143,7 +143,7 @@ def calc_rect(image, landmarks):
 def log_to_csv(digit, nose_tip_corrds, mode, landmark_list):
     nose_list = [nose_tip_corrds.x, nose_tip_corrds.y]
     if mode == 1 and (0 <= digit <= 9999):
-        csv_path = POINTS_SAVE_PATH
+        csv_path = DATASET_PATH2
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
             writer.writerow([digit, *nose_list, *landmark_list])

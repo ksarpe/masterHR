@@ -11,9 +11,10 @@ def initialize_camera():
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT)
     return cap
 
-def load_labels():
+def load_labels(chapter=0):
     """Load classifier labels from a CSV file."""
-    with open(LABELS_PATH, encoding='utf-8-sig') as f:
+    path = LABELS_PATH if chapter == 0 else LABELS_PATH2
+    with open(path, encoding='utf-8-sig') as f:
         reader = csv.reader(f)
         labels = [row[0] for row in reader]
     return labels
