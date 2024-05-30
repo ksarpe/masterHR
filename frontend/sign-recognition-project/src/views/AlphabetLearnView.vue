@@ -54,7 +54,7 @@ import { onMounted, ref } from 'vue'
 import VideoCapture from '@/components/VideoCapture.vue'
 import Tutorial from '@/components/Tutorial.vue'
 
-const chapter = 1
+const chapter = 2
 const audioSuccess = new Audio('src/assets/audio/success.mp3')
 let words = []
 let showTutorial = ref(true)

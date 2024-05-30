@@ -61,7 +61,7 @@ import VideoCapture from '@/components/VideoCapture.vue'
 import TutorialGame from '@/components/TutorialGame.vue'
 
 const testDuration = ref(30)
-const chapter = 1
+const chapter = 2
 let words = []
 const correctAnswers = ref(0)
 let showTutorial = ref(true)

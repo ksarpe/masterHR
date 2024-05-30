@@ -12,7 +12,7 @@ from model.point_recognizer.point_recognizer import PointRecognizer
 def process(image, chapter=0):
     labels = load_labels() if chapter == 0 else load_labels(chapter=2)
     hands, face, mp_face = configure_model()
-    point_recognizer = PointRecognizer(chapter=2)
+    point_recognizer = PointRecognizer(chapter_number=2)
 
     image = Image.open(image.stream).convert('RGB')
     image = np.array(image)

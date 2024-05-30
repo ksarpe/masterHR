@@ -64,7 +64,7 @@ import TutorialTest from '@/components/TutorialTest.vue'
 const audioSuccess = new Audio('src/assets/audio/success.mp3')
 
 const totalQuestions = ref(5)
-const chapter = 1
+const chapter = 2
 let words = []
 let badWords = []
 const correctAnswers = ref(0)

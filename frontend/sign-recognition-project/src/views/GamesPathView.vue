@@ -17,8 +17,8 @@
 
 <script setup>
 const learningPath = [
-  { id: 1, title: 'GRA I (PODSTAWY I)', link: '/games/game-introduction', description: 'Gra z czasem zawierającą gesty z kursu podstawowego I.'},
-  { id: 2, title: 'GRA II (WKRÓTCE)', link: '/games', description: '...'},
+  { id: 1, title: 'GRA I (PODSTAWY I)', link: '/games/game-introduction', description: 'Gra z czasem zawierająca gesty z kursu podstawowego I.'},
+  { id: 2, title: 'GRA II (ALFABET)', link: '/games/alphabet', description: 'Gra z czasem zawierająca znaki alfabetu (praworęczne).'},
   { id: 3, title: 'GRA III (WKRÓTCE)', link: '/games', description: '...'},
   { id: 4, title: 'GRA IV (WKRÓTCE...)', link: '/games', description: '...'},
   { id: 5, title: 'GRA V (WKRÓTCE...)', link: '/games', description: '...'},

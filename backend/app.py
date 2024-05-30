@@ -24,7 +24,7 @@ def process_frame():
     return jsonify({'error': 'Failed to process the image', 'details': str(e)}), 500
 
 @app.route('/process_frame_alphabet', methods=['POST'])
-def process_frame():
+def process_frame_alphabet():
   logger.info("Got request to process the image")
   if 'file' not in request.files:
     return jsonify({'error': 'No file part'}), 400

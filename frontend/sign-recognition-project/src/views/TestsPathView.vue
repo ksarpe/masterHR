@@ -17,8 +17,8 @@
 
 <script setup>
 const learningPath = [
-  { id: 1, title: 'TEST I (PODSTAWY I)', link: '/tests/test-introduction', description: 'Test zawierający pytanie z zakresu podstaw I'},
-  { id: 2, title: 'TEST II (WKRÓTCE)', link: '/tests', description: '...'},
+  { id: 1, title: 'TEST I (PODSTAWY I)', link: '/tests/test-introduction', description: 'Test zawierający pytania z zakresu podstaw I'},
+  { id: 2, title: 'TEST II (ALFABET)', link: '/tests/alphabet', description: 'Test zawierający pytania z zakresu alfabetu migowego.'},
   { id: 3, title: 'TEST III (WKRÓTCE)', link: '/tests', description: '...'},
   { id: 4, title: 'TEST IV (WKRÓTCE...)', link: '/tests', description: '...'},
   { id: 5, title: 'TEST V (WKRÓTCE...)', link: '/tests', description: '...'},

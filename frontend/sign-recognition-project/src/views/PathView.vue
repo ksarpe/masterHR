@@ -17,7 +17,7 @@
 <script setup>
 const learningPath = [
   { id: 1, title: 'PODSTAWY I', link: '/learn/introduction' },
-  { id: 2, title: 'WKRÓTCE', link: '/learn' },
+  { id: 2, title: 'ALFABET', link: '/learn/alphabet' },
   { id: 3, title: 'WKRÓTCE', link: '/learn' },
   { id: 4, title: 'WKRÓTCE...', link: '/learn' },
   { id: 5, title: 'WKRÓTCE...', link: '/learn' },

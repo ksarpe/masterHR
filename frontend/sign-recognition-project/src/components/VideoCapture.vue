@@ -35,7 +35,9 @@ watch(
   { deep: true }
 )
 
-defineProps()
+const props = defineProps({
+  chapterNumber: Number
+})
 const emit = defineEmits(['update:result'])
 
 function handleKeydown(event) {
@@ -71,6 +73,12 @@ const setupVideo = async () => {
 
 const captureFrame = () => {
   IdleState.value = false
+  let link = ""
+  if (props.chapterNumber === 1) {
+    link = 'http://localhost:5000/process_frame';
+  } else if (props.chapterNumber === 2) {
+    link = 'http://localhost:5000/process_frame_alphabet';
+  }
   setTimeout(() => {
     const canvas = document.createElement('canvas')
   if (videoElement.value) {
@@ -83,7 +91,7 @@ const captureFrame = () => {
       formData.append('file', blob, 'frame.png')
 
       try {
-        const response = await fetch('http://localhost:5000/process_frame', {
+        const response = await fetch(link, {
           method: 'POST',
           body: formData
         })

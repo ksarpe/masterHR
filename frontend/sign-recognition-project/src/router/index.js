@@ -9,6 +9,9 @@ import HelpView from '@/views/HelpView.vue'
 import IntroductionFirstView from '@/views/IntroductionFirstView.vue'
 import IntroductionTestView from '@/views/IntroductionTestView.vue'
 import IntroductionGameView from '@/views/IntroductionGameView.vue'
+import AlphabetLearnView from '@/views/AlphabetLearnView.vue'
+import AlphabetTestView from '@/views/AlphabetTestView.vue'
+import AlphabetGameView from '@/views/AlphabetGameView.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: IndexView },
@@ -20,6 +23,9 @@ const routes = [
   { path: '/learn/introduction', name: 'IntroductionFirst', component: IntroductionFirstView },
   { path: '/tests/test-introduction', name: 'IntroductionTest', component: IntroductionTestView },
   { path: '/games/game-introduction', name: 'IntroductionGame', component: IntroductionGameView },
+  { path: '/learn/alphabet', name: 'AlphabetLearn', component: AlphabetLearnView },
+  { path: '/tests/alphabet', name: 'AlphabetTest', component: AlphabetTestView },
+  { path: '/games/alphabet', name: 'AlphabetGame', component: AlphabetGameView },
 ]
 
 const router = createRouter({
