@@ -85,14 +85,14 @@ function handleResultUpdate(newResult) {
     } else {
       expected.value = words[0]
       if (!showImagesRandomly.value) {
-        imageSrc.value = 'src/assets/chapter1_images/' + expected.value + '.png'
+        imageSrc.value = 'src/assets/chapter2_images/' + expected.value + '.png'
       } else {
         // calculate change to not display an image
         let random = Math.floor(Math.random() * 2)
         if (random === 0) {
           imageSrc.value = ''
         } else {
-          imageSrc.value = 'src/assets/chapter1_images/' + expected.value + '.png'
+          imageSrc.value = 'src/assets/chapter2_images/' + expected.value + '.png'
         }
       }
     }
@@ -118,7 +118,7 @@ async function fetchWords() {
     const data = await response.json()
     words = data.words
     expected.value = words[0]
-    imageSrc.value = 'src/assets/chapter1_images/' + expected.value + '.png'
+    imageSrc.value = 'src/assets/chapter2_images/' + expected.value + '.png'
   } catch (error) {
     console.error('Error fetching words:', error)
   }
