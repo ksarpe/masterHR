@@ -70,9 +70,6 @@ const showImagesRandomly = ref(false) // This will control the random image disp
 
 function handleResultUpdate(newResult) {
   result.value = newResult
-  console.log(showImagesRandomly.value)
-  console.log('Result:', result.value.label_name)
-  console.log('Expected:', expected.value)
   if (result.value.label_name === expected.value) {
     showSuccess.value = true
     audioSuccess.play()
@@ -128,6 +125,7 @@ async function fetchWords() {
 onMounted(() => {
   fetchWords()
 })
+
 </script>
 
 <style scoped>

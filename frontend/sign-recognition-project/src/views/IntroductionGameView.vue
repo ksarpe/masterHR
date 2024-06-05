@@ -1,5 +1,21 @@
 <template>
   <tutorial-game v-if="showTutorial" @close="showTutorial = false" />
+  <div v-if="showSuccess" class="absolute inset-0 flex justify-center items-center">
+      <div class="animate-bounce bg-green-500 text-white font-bold p-10 rounded-2xl text-xl">
+        DOBRZE!
+      </div>
+    </div>
+    <div v-if="showBad" class="absolute inset-0 flex justify-center items-center">
+      <div class="animate-bounce bg-red-500 text-white font-bold p-10 rounded-2xl text-xl">
+        ŹLE :(
+      </div>
+    </div>
+    <div v-if="showUnknown" class="absolute inset-0 flex justify-center items-center">
+      <div class="animate-bounce bg-yellow-500 text-white font-bold p-10 rounded-2xl text-xl">
+        Nie wykryto! <br />
+        Spróbuj jeszcze raz.
+      </div>
+    </div>
   <div class="flex items-center text-center pt-4 px-12">
     <p class="text-2xl font-semibold text-white mr-12">GRA I - POSTAWY I</p>
     <div v-if="!testStarted">
@@ -61,6 +77,11 @@ import VideoCapture from '@/components/VideoCapture.vue'
 import TutorialGame from '@/components/TutorialGame.vue'
 import { API_URL } from '@/config'
 
+const audioSuccess = new Audio('src/assets/audio/success.mp3')
+const showSuccess = ref(false)
+const showBad = ref(false)
+const showUnknown = ref(false)
+
 const testDuration = ref(30)
 const chapter = 1
 let words = []
@@ -92,8 +113,26 @@ function handleResultUpdate(newResult) {
 
 function checkAnswer() {
   if (result.value.label_name === expected.value) {
+    showSuccess.value = true
+    audioSuccess.play()
+    setTimeout(() => {
+      showSuccess.value = false
+    }, 1000) // Hide success message after 2 seconds
     correctAnswers.value++
     timeLeft.value += 1
+  }
+  else if(result.value.label_name === 'Spróbuj ponownie!') {
+    showUnknown.value = true
+    setTimeout(() => {
+      showUnknown.value = false
+    }, 2000) // Hide success message after 2 second
+  }
+  else {
+    showBad.value = true
+    //audioSuccess.play()
+    setTimeout(() => {
+      showBad.value = false
+    }, 1000) // Hide success message after 2 second
   }
   updateTestProgress()
 }

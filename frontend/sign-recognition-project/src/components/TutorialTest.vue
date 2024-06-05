@@ -1,24 +1,39 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-85 flex justify-center items-center text-gray-800">
-    <div class="bg-white p-5 rounded-lg text-center border-blue-500 border-4 w-auto max-w-full md:max-w-2xl mx-4 overflow-auto">
+  <div
+    v-if="showTutorial"
+    class="fixed inset-0 bg-black bg-opacity-85 flex justify-center items-center text-gray-800 p-4 overflow-auto"
+  >
+    <div
+      class="bg-white p-5 rounded-lg text-center border-blue-500 border-4 w-full max-w-full md:max-w-2xl max-h-full overflow-auto"
+    >
       <h2 class="text-2xl md:text-3xl font-bold mb-4">Witaj w samouczku!</h2>
       <div class="text-lg md:text-2xl font-medium">
-        <p>Po <strong>lewej stronie (lub u góry na urządzeniu mobilnym)</strong> znajduje się podgląd Twojej kamery.</p>
-        <p>Po <strong>prawej stronie (lub na dole na urządzeniu mobilnym)</strong> widzisz gest, który musisz pokazać, oraz obecny wynik.</p>
+        <p>
+          Po <strong>lewej stronie (lub u góry na urządzeniu mobilnym)</strong> znajduje się podgląd
+          Twojej kamery.
+        </p>
+        <p>
+          Po <strong>prawej stronie (lub na dole na urządzeniu mobilnym)</strong> widzisz gest,
+          który musisz pokazać, oraz obecny wynik.
+        </p>
         <p>Znak zostanie zweryfikowany po wykonaniu poniższych czynności.</p>
         <p class="font-semibold">
-          <span class="text-red-400 font-semibold">Kliknij myszką (bądź palcem) na przycisk pod Twoją kamerą</span>, a po dwóch sekundach zostanie zrobione zdjęcie.
+          <span class="text-red-400 font-semibold"
+            >Kliknij myszką (bądź palcem) na przycisk pod Twoją kamerą</span
+          >, a po dwóch sekundach zostanie zrobione zdjęcie.
         </p>
         <p class="font-semibold">
-          bądź po prostu <span class="text-red-400 font-semibold">naciśnij enter (tylko na PC)</span>, a również po dwóch sekundach zostanie zrobione zdjęcie.
+          bądź po prostu
+          <span class="text-red-400 font-semibold">naciśnij enter (tylko na PC)</span>, a również po
+          dwóch sekundach zostanie zrobione zdjęcie.
         </p>
         <p class="text-base md:text-xl">
           (w lewym dolnym rogu znajduje się również podpowiedź ostatnio wykrytego znaku)
         </p>
-        <br>
+        <br />
         <p class="text-lg md:text-2xl text-red-500 font-bold p-1">
-          Staraj się być w odległości maksymalnie 1 metra od kamery! <br>
-          Siedź w dobrze oświetlonym otoczeniu.<br>
+          Staraj się być w odległości maksymalnie 1 metra od kamery! <br />
+          Siedź w dobrze oświetlonym otoczeniu.<br />
           Pokazuj znaki tak jakbyś faktycznie rozmawiał z drugą osobą.
         </p>
       </div>
@@ -33,10 +48,28 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'
+
 const emit = defineEmits(['close'])
+const showTutorial = ref(true)
 
 function closeTutorial() {
+  showTutorial.value = false
   emit('close')
+}
+
+// Watch for changes in showTutorial to add/remove body class
+watch(showTutorial, (newVal) => {
+  if (newVal) {
+    document.body.classList.add('lock-scroll')
+  } else {
+    document.body.classList.remove('lock-scroll')
+  }
+})
+
+// Ensure the body class is added when the component is mounted
+if (showTutorial.value) {
+  document.body.classList.add('lock-scroll')
 }
 </script>
 
@@ -60,5 +93,9 @@ function closeTutorial() {
   .mt-8 {
     margin-top: 2rem;
   }
+}
+
+body.lock-scroll {
+  overflow: hidden;
 }
 </style>

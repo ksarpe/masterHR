@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-85 flex justify-center items-center text-gray-800 p-4 overflow-auto">
+  <div v-if="showTutorial" class="fixed inset-0 bg-black bg-opacity-85 flex justify-center items-center text-gray-800 p-4 overflow-auto">
     <div class="bg-white p-5 rounded-lg text-center border-blue-500 border-4 w-full max-w-full md:max-w-2xl max-h-full overflow-auto">
       <h2 class="text-2xl md:text-3xl font-bold mb-4">Witaj w samouczku!</h2>
       <div class="text-lg md:text-2xl font-medium">
@@ -33,10 +33,28 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'
+
 const emit = defineEmits(['close'])
+const showTutorial = ref(true)
 
 function closeTutorial() {
   emit('close')
+  showTutorial.value = false
+}
+
+// Watch for changes in showTutorial to add/remove body class
+watch(showTutorial, (newVal) => {
+  if (newVal) {
+    document.body.classList.add('lock-scroll')
+  } else {
+    document.body.classList.remove('lock-scroll')
+  }
+})
+
+// Ensure the body class is added when the component is mounted
+if (showTutorial.value) {
+  document.body.classList.add('lock-scroll')
 }
 </script>
 
@@ -60,5 +78,9 @@ function closeTutorial() {
   .mt-8 {
     margin-top: 2rem;
   }
+}
+
+.lock-scroll {
+  overflow: hidden;
 }
 </style>
