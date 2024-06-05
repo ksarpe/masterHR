@@ -22,7 +22,7 @@
       Spróbuj jeszcze raz.
     </div>
   </div>
-  <div class="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="mx-auto grid grid-cols-1 lg:grid-cols-2 lg:gap-6 gap-4">
     <div>
       <video-capture :chapter-number="chapter" @update:result="handleResultUpdate" />
     </div>

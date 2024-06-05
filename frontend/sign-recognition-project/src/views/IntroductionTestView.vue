@@ -17,18 +17,18 @@
         Spróbuj jeszcze raz.
       </div>
     </div>
-    <div class="mx-auto flex w-full">
-      <div class="flex-1">
+    <div class="mx-auto grid grid-cols-1 lg:grid-cols-2 mt-12">
+      <div>
         <video-capture :chapter-number="chapter" @update:result="handleResultUpdate" />
       </div>
-      <div class="flex-1 flex flex-col items-center justify-center pr-12">
+      <div class="flex-1 flex flex-col items-center justify-center result-right">
         <div
           v-if="result"
           class="p-7 bg-gray-400 rounded-lg flex flex-col items-center justify-center w-full text-center"
         >
         <div v-if="questionsAnswered != totalQuestions">
           <p class="text-4xl font-semibold">
-            POKAŻ: <span class="text-yellow-300 font-bold text-6xl">{{ expected }}</span>
+            POKAŻ: <span class="text-yellow-300 font-bold text-4xl">{{ expected }}</span>
           </p>
           <p class="text-2xl text-white mt-2">Wynik: {{ correctAnswers }}/{{ totalQuestions }}</p>
           <p class="text-2xl text-white mt-2">
@@ -152,6 +152,12 @@ onMounted(() => {
   }
   50% {
     transform: scale(2);
+  }
+}
+
+@media (max-width: 1024px) {
+  .result-right{
+    margin: auto;
   }
 }
 </style>

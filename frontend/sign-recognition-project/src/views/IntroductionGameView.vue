@@ -14,12 +14,12 @@
     </div>
   </div>
 
-  <div class="flex w-full h-screen justify-center items-center">
-    <div class="mx-auto flex w-full">
-      <div class="flex-1">
+  <div class="flex w-full justify-center items-center">
+    <div class="mx-auto grid grid-cols-1 lg:grid-cols-2 lg:gap-6">
+      <div>
         <video-capture :chapter-number="chapter" @update:result="handleResultUpdate" />
       </div>
-      <div class="flex-1 flex flex-col items-center justify-center pr-12">
+      <div class="flex-1 flex flex-col items-center justify-center">
         <div
           class="p-7 bg-gray-400 rounded-lg flex flex-col items-center justify-center w-full text-center"
         >

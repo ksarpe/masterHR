@@ -1,4 +1,5 @@
 <template>
+  <div class="px-4">
   <div class="max-w-4xl mx-auto mt-8 p-6 bg-gray-500 rounded-lg shadow-lg text-xl">
     <h1 class="text-3xl font-bold text-gray-800 mb-4">
       Witaj w platformie do nauki języka migowego!
@@ -54,5 +55,6 @@
       wrażenia i zapraszamy do regularnego odwiedzania platformy, aby śledzić postępy i nowości.
     </p>
   </div>
+</div>
 </template>
 <script setup></script>

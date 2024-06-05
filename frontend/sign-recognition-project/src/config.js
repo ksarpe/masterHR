@@ -1,4 +1,4 @@
 const LOCALHOST_IP = 'http://localhost:5000';
-const SERVER_IP = 'http://146.59.19.134:5000';
+const SERVER_IP = 'https://kasperjanowski.pl';
 
-export const API_URL = SERVER_IP;
+export const API_URL = LOCALHOST_IP;

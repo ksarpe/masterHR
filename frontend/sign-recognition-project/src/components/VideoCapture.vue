@@ -1,6 +1,6 @@
 <template>
-  <div class="flex h-screen">
-    <div class="w-full p-12">
+  <div class="flex lg:h-screen">
+    <div class="w-full px-12 py-4">
       <div class="bg-gray-400 shadow-lg rounded-3xl p-4">
         <video ref="videoElement" autoplay class="w-full h-auto rounded-3xl"></video>
         <button

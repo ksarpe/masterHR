@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 bg-gray-700 min-h-screen">
+  <div class="p-8 bg-gray-700 min-h-screen items-center">
     <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Iterating through each learning path item -->
       <router-link
