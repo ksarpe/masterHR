@@ -59,6 +59,7 @@
 import { onMounted, ref, watch } from 'vue'
 import VideoCapture from '@/components/VideoCapture.vue'
 import TutorialGame from '@/components/TutorialGame.vue'
+import { API_URL } from '@/config'
 
 const testDuration = ref(30)
 const chapter = 2
@@ -134,7 +135,7 @@ function startTimer() {
 
 async function fetchWords() {
   try {
-    const response = await fetch(`http://localhost:5000/get_words?chapter=${chapter}`)
+    const response = await fetch(`${API_URL}/get_words?chapter=${chapter}`)
     const data = await response.json()
     words = data.words
     expected.value = words[0]

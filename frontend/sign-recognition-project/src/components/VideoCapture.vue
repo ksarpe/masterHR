@@ -22,6 +22,7 @@
 
 <script setup>
 import { ref, onMounted, reactive, onBeforeUnmount, watch } from 'vue'
+import { API_URL } from '@/config'
 
 const videoElement = ref(null)
 const IdleState = ref(true)
@@ -75,9 +76,9 @@ const captureFrame = () => {
   IdleState.value = false
   let link = ""
   if (props.chapterNumber === 1) {
-    link = 'http://localhost:5000/process_frame';
+    link = `${API_URL}/process_frame`;
   } else if (props.chapterNumber === 2) {
-    link = 'http://localhost:5000/process_frame_alphabet';
+    link = `${API_URL}/process_frame_alphabet`;
   }
   setTimeout(() => {
     const canvas = document.createElement('canvas')

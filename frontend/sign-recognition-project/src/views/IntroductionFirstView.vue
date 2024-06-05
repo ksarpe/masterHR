@@ -53,6 +53,7 @@
 import { onMounted, ref } from 'vue'
 import VideoCapture from '@/components/VideoCapture.vue'
 import Tutorial from '@/components/Tutorial.vue'
+import { API_URL } from '@/config'
 
 const chapter = 1
 const audioSuccess = new Audio('src/assets/audio/success.mp3')
@@ -114,7 +115,7 @@ function handleResultUpdate(newResult) {
 
 async function fetchWords() {
   try {
-    const response = await fetch(`http://localhost:5000/get_words?chapter=${chapter}`)
+    const response = await fetch(`${API_URL}/get_words?chapter=${chapter}`)
     const data = await response.json()
     words = data.words
     expected.value = words[0]
